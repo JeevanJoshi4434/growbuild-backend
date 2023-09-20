@@ -27,7 +27,7 @@ router.post('/create/buyermaster',verifyToken, async (req, res) => {
         bank_name,
         branch_name,
         bank_account,
-        card_number
+        card_number,
     })
     try {
         const savedBuyermaster = await newBuyermaster.save();

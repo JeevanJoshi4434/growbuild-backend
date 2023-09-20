@@ -4,7 +4,7 @@ const Parkings = require('../Models/Parkings');
 // const {Project, floor, building, parkings,Total_Parking_Area_square_feet, Single_Parking_Area_square_feet, extra_facilities} = req,body;
 
 router.post('/create/parking',verifyToken,async(req,res)=>{
-    const {Project, floor, building, parkings,Total_Parking_Area_square_feet, Single_Parking_Area_square_feet, extra_facilities} = req.body;
+    const {Project, floor, building,price, parkings,Total_Parking_Area_square_feet, Single_Parking_Area_square_feet, extra_facilities} = req.body;
     const newParking = new Parkings({
         Project,
         floor,
@@ -12,7 +12,8 @@ router.post('/create/parking',verifyToken,async(req,res)=>{
         parkings,
         Total_Parking_Area_square_feet,
         Single_Parking_Area_square_feet,
-        extra_facilities
+        extra_facilities,
+        price:price
     });
     try {
         const savedParking = await newParking.save();

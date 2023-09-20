@@ -67,6 +67,7 @@ const BuyerMaster = new mongoose.Schema({
     card_number: {
         type: String
     }
+    
 
 });
 

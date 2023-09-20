@@ -123,7 +123,10 @@ const Booking = new mongoose.Schema({
  },
   fourth_applicant_phone_number:{
     type:Number
- }
+ },
+ price_with_tax:{
+   type: String
+}
 })
 
 module.exports = mongoose.model('Booking', Booking);

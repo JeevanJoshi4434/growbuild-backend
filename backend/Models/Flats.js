@@ -19,6 +19,9 @@ const Flat = new mongoose.Schema({
         type:Number
     } ,extra_facilities:{
         type:String
+    },
+    bedRoom:{
+        type:String
     }
 });
 

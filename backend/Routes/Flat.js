@@ -5,7 +5,7 @@ const Flats = require('../Models/Flats');
 // create Flat
 
 router.post('/create/flat',verifyToken,async(req,res)=>{
-    const {Project, floor, building, unit ,flat, flat_area, parking, starting_price ,extra_facilities} = req.body;
+    const {Project, floor,bedRoom, building, unit ,flat, flat_area, parking, starting_price ,extra_facilities} = req.body;
     const newFlat = new Flats({
         Project,
         floor,
@@ -15,7 +15,8 @@ router.post('/create/flat',verifyToken,async(req,res)=>{
         flat_area,
         parking,
         starting_price,
-        extra_facilities
+        extra_facilities,
+        bedRoom:bedRoom
     });
     try {
         const savedFlat = await newFlat.save();

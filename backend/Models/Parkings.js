@@ -15,6 +15,9 @@ const Parking = new mongoose.Schema({
      type:Number
  }, extra_facilities:{
      type:String
+ },
+ price:{
+    type:Number
  }
 })
 

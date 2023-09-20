@@ -30,6 +30,12 @@ const Unit = new mongoose.Schema({
     },
      extra_facilities: {
         type: String
+    },
+    price:{
+        type:Number,
+    },
+    totalPrice:{
+        type:Number,
     }
 })
 
