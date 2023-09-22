@@ -71,4 +71,15 @@ router.get('/parking/:id',verifyToken,async(req,res)=>{
     }
 })
 
+router.post('/booking/parking',verifyToken,async(req,res)=>{
+    try {
+        const {Project,building,floor} = req.body;
+        const parking = await Parkings.findOne({Project,building});
+        if(!parking) return res.status(404).json({status:404});
+        res.status(200).json({status:200,price:parking.price});
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
 module.exports = router;
