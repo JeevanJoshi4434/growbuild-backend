@@ -83,4 +83,15 @@ router.get('/get/all/buyermaster',verifyToken, async (req, res) => {
         res.status(500).json(err);
     }
 })
+
+router.get(`/get/buyer/:Project/:Building/:floor/:unit/:payment_stage`, verifyToken, async(req,res)=>{
+    const { Project , Building  , floor   , unit} = req.params ;
+    try {
+        const BuyerMaster = await Buyermaster.find({Project, Building, floor, unit,payment_stage});
+        if(!BuyerMaster) return res.status(404).json({status:404});
+        res.status(200).json({status:200,price:BuyerMaster.payment_receive});
+    }catch (err){
+        res.status(500).json(err);
+    }
+})
 module.exports = router;

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const BuyerMaster = new mongoose.Schema({
-    ProProject: {
+    Project: {
         type: String
     },
     Building: {

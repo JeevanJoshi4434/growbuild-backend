@@ -14,6 +14,7 @@ const FlatRoute = require('./Routes/Flat');
 const PaymentRecieveRoute = require('./Routes/Payment_Recieve');
 const UnitRoute = require('./Routes/Unit');
 const SaleInoventoryRoute = require('./Routes/Sale_Inoventory');
+const PaymentStatus = require('./Routes/PaymentStatus');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const path = require('path');
@@ -42,6 +43,8 @@ app.use("/api", BuyerMasterRoute);
 app.use("/api", BookingStatusRoute);
 app.use("/api", BookingRoute);
 app.use("/api", ParkingRoute);
+app.use("/api", PaymentStatus);
+
 
 //Home Page
 app.get('/', (req, res) => {
