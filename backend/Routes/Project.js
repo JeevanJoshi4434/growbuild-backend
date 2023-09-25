@@ -30,7 +30,7 @@ router.get('/project/:id',verifyToken,async(req,res)=>{
     try{
         const project = await Project.findById(req.params.id);
         if(!project) res.status(404).json("Not Found!");
-        res.status(200).json(project);
+        res.status(200).json({name:project.Name});
     }catch(err){
         res.status(500).json(err);
     }

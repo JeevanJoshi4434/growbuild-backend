@@ -40,7 +40,7 @@ router.get('/building/:id',verifyToken,async(req,res)=>{
     try{
         const booking = await Bookings.findById(req.params.id);
         if(!booking) res.status(404).json("Not Found!");
-        res.status(200).json(booking);
+        res.status(200).json({name:booking.buildingName});
     }catch(err){
         res.status(500).json(err);
     }

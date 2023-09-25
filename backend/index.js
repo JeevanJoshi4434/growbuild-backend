@@ -46,7 +46,7 @@ app.use("/api", ParkingRoute);
 app.use("/api", PaymentStatus);
 
 
-// //Home Page
+//Home Page
 // app.get('/', (req, res) => {
 //     const OTPgen = () => {
 //         let OTP = '';
