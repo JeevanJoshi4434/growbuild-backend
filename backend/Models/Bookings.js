@@ -59,7 +59,7 @@ const Booking = new mongoose.Schema({
     type:Number
  },
   first_applicant_pan_number:{
-    type:Number
+    type:String
  },
   first_applicant_City:{
     type:String
@@ -101,7 +101,7 @@ const Booking = new mongoose.Schema({
       type:String
  },
   second_applicant_pan_number:{
-    type:Number
+    type:String
  },
   second_applicant_occupation:{
     type:String
