@@ -126,6 +126,9 @@ const Booking = new mongoose.Schema({
  },
  price_with_tax:{
    type: String
+},
+totalAmount:{
+   type:Number,
 }
 })
 
