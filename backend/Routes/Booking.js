@@ -107,9 +107,9 @@ router.get('/get/all/booking',verifyToken,async(req,res)=>{
     }
 })
 
-router.get('/:id/:project/:unit/:flat/:floor',verifyToken,async(req,res)=>{
+router.get('/:id/:project/:unit/:floor',verifyToken,async(req,res)=>{
     try{
-        const booking = await Bookings.findOne({building:req.params.id,Project:req.params.project,floor:req.params.floor,unit:req.params.unit,flat:req.params.flat});
+        const booking = await Bookings.findOne({building:req.params.id,Project:req.params.project,floor:req.params.floor,unit:req.params.unit});
         if(!booking) return res.status(201).send('Booking not found');
         res.status(200).json(booking);
     } catch (error){
