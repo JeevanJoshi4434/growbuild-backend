@@ -21,7 +21,8 @@ route.post("/signup", async (req, res) => {
         }, process.env.JWT_SECRET)
         const OTP = this.generateOTP();
         res.cookie('token', accessToken, {
-            maxAge: 2592000, httpOnly: false
+            // maxAge: 2592000,
+             httpOnly: false
         })
         res.set('Set-Cookie', `token=${accessToken}; HttpOnly; Max-Age=2592000`);
         res.status(201).json({ message: "User Created Successfully!" });
@@ -44,7 +45,9 @@ route.post("/login", async (req, res,next) => {
                     id: user._id,
                     name: user.name
                 }, process.env.JWT_SECRET);
-                res.cookie('token', accessToken, { httpOnly: true,maxAge:31536000 * 365 * 24 * 60 * 60 });
+                res.cookie('token', accessToken, { httpOnly: true,
+                // maxAge:31536000 * 365 * 24 * 60 * 60 
+            });
                 res.status(200).json({ other});
 
             } else {
