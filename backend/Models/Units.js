@@ -29,13 +29,19 @@ const Unit = new mongoose.Schema({
         type: Number
     },
      extra_facilities: {
-        type: String
+        type: Array
     },
     price:{
         type:Number,
     },
     totalPrice:{
         type:Number,
+    },
+    gst:{
+        type:Number
+    },
+    pricewithtax:{
+        type:Number
     }
 })
 

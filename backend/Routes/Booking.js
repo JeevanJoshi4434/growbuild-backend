@@ -48,7 +48,8 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         fourth_applicant_name,
         fourth_applicant_phone_number,
         price_with_tax,
-        totalAmount
+        totalAmount,
+        extra_facility
         
     })
     try {

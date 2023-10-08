@@ -129,6 +129,9 @@ const Booking = new mongoose.Schema({
 },
 totalAmount:{
    type:Number,
+},
+extra_facility:{
+   type:Array
 }
 })
 
