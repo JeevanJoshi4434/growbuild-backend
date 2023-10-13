@@ -7,7 +7,7 @@ const verifyToken = require('../config/Verification');
 // create Unit
 
 router.post('/create/unit',verifyToken,async(req,res)=>{
-    const {Project, building, unit_name,pricewithtax,gst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities,price,totalPrice} = req.body;
+    const {Project, building, unit_name,pricewithtax,sgst,cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities,price,totalPrice} = req.body;
     const newUnit = new Units({
         Project,
         building,
@@ -19,10 +19,11 @@ router.post('/create/unit',verifyToken,async(req,res)=>{
         total_number_of_flat_on_this_unit,
         parking_detail,
         extra_facilities,
-        totalPrice:totalPrice,
-        price:price,
         pricewithtax,
-        gst
+        sgst,
+        cgst,
+        totalPrice,
+        price
     });
     try {
         const savedUnit = await newUnit.save();

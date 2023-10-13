@@ -11,7 +11,10 @@ const Building = new mongoose.Schema({
     type:Number
  }, parkings:{
     type:Number
- }
+ },
+ extra_facilities: {
+   type: Array
+},
 });
 
 module.exports = mongoose.model('Building',Building);

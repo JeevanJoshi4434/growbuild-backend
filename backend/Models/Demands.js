@@ -9,9 +9,14 @@ const Demand = new mongoose.Schema({
     type:String
  }, amount:{
     type:Number
- }, extra_facilities:{
-    type:String
+ }, 
+ extra_facilities:{
+    type:Array
+ },
+ Status:{
+   type:String,
  }
+
 })
 
 module.exports = mongoose.model('Demand', Demand);
