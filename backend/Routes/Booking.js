@@ -10,7 +10,6 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         building,
         floor,
         unit,
-        flat,
         parking,
         booking_price,
         booking_date,

@@ -13,9 +13,6 @@ const Booking = new mongoose.Schema({
    unit: {
       type: String
    },
-   flat: {
-      type: String
-   },
    parking: {
       type: Number
    },
