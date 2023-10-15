@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Units = require('../Models/Units');
 const Building = require('../Models/Buildings');
-const Building = require('../Models/Bookings');
+const Bookings = require('../Models/Bookings');
 const mongoose = require('mongoose');
 const verifyToken = require('../config/Verification');
 // const {Project, building, unit_name, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities} = req.body
