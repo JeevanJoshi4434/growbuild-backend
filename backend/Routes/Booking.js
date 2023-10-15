@@ -54,12 +54,9 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         unitPrice,
         
     })
-    try {
         const savedBooking = await newBooking.save();
         res.status(200).json(savedBooking);
-    }catch (err) {
-        res.status(500).json(err);
-    }
+
 })
 
 // update booking
