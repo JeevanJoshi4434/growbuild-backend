@@ -104,7 +104,7 @@ router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
 
         // Filter out units that are not booked
         const availableUnits = allUnits.filter(unit => !bookedUnitIds.includes(unit._id));
-
+        console.log({all:allUnits,booked:bookedUnits,Ids:bookedUnitIds,available:availableUnits});
         res.status(200).json(availableUnits);
     } catch (error) {
         res.status(500).json(error);
