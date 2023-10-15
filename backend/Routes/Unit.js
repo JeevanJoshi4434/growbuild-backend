@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Units = require('../Models/Units');
 const Building = require('../Models/Buildings');
-const Bookings = require('../Models/Bookings');
+const Building = require('../Models/Bookings');
 const mongoose = require('mongoose');
 const verifyToken = require('../config/Verification');
 // const {Project, building, unit_name, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities} = req.body
@@ -80,7 +80,20 @@ router.get('/unit/:id',verifyToken,async(req,res)=>{
         res.status(500).json(error);
     }
 })
-router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
+
+router.get('/find/unit/:building/:project',verifyToken,async(req,res)=>{
+    if(!mongoose.isValidObjectId(req.params.building) || !mongoose.isValidObjectId(req.params.project)) return res.status(400).json("Provided Information is not Valid.");
+    const building = await Building.findById(req.params.building);
+    if(!building) return res.status(404).send("building not found");
+    try {
+        const unit = await Units.find({building:req.params.building,Project:req.params.project});
+        res.status(200).json(unit);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+})
+
+router.get('/find/unit/available/:building/:project', verifyToken, async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.building) || !mongoose.isValidObjectId(req.params.project)) {
         return res.status(400).json("Provided Information is not Valid.");
     }
@@ -107,5 +120,4 @@ router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
         res.status(500).json(error);
     }
 });
-
 module.exports = router;
