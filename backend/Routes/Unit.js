@@ -80,7 +80,6 @@ router.get('/unit/:id',verifyToken,async(req,res)=>{
         res.status(500).json(error);
     }
 })
-
 router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.building) || !mongoose.isValidObjectId(req.params.project)) {
         return res.status(400).json("Provided Information is not Valid.");
@@ -101,10 +100,8 @@ router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
 
         // Create a set of unit IDs that are booked for efficient lookup
         const bookedUnitIds = new Set(bookedUnits.map(bookedUnit => bookedUnit.unit.toString()));
-
         // Filter out units that are not booked
         const availableUnits = allUnits.filter(unit => !bookedUnitIds.has(unit._id.toString()));
-        console.log({ allUnits, bookedUnits, bookedUnitIds: Array.from(bookedUnitIds), availableUnits });
         res.status(200).json( availableUnits);
     } catch (error) {
         res.status(500).json(error);
