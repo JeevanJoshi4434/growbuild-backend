@@ -99,13 +99,13 @@ router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
         // Find all booked units in the specified building and project
         const bookedUnits = await Bookings.find({ building: req.params.building, Project: req.params.project });
 
-        // Create an array of unit IDs that are booked
-        const bookedUnitIds = bookedUnits.map(bookedUnit => bookedUnit.unit);
+        // Create a set of unit IDs that are booked for efficient lookup
+        const bookedUnitIds = new Set(bookedUnits.map(bookedUnit => bookedUnit.unit.toString()));
 
         // Filter out units that are not booked
-        const availableUnits = allUnits.filter(unit => !bookedUnitIds.includes(unit._id));
-        console.log({all:allUnits,booked:bookedUnits,Ids:bookedUnitIds,available:availableUnits});
-        res.status(200).json(availableUnits);
+        const availableUnits = allUnits.filter(unit => !bookedUnitIds.has(unit._id.toString()));
+        console.log({ allUnits, bookedUnits, bookedUnitIds: Array.from(bookedUnitIds), availableUnits });
+        res.status(200).json( availableUnits);
     } catch (error) {
         res.status(500).json(error);
     }
