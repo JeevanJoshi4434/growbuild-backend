@@ -138,6 +138,9 @@ const Booking = new mongoose.Schema({
    },
    unitPrice: {
       type: Number
+   },
+   pending:{
+      type: Number
    }
 })
 
