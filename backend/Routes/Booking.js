@@ -54,7 +54,6 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         bookingPrice,
         unitPrice,
         demands:demand,
-        pending:booking_price-totalAmount
     })
         const savedBooking = await newBooking.save();
         res.status(200).json(savedBooking);
