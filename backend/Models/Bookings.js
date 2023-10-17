@@ -14,10 +14,10 @@ const Booking = new mongoose.Schema({
       type: String
    },
    parking: {
-      type: Number
+      type: String
    },
    booking_price: {
-      type: Number
+      type: String
    },
    booking_date: {
       type: String
@@ -44,7 +44,7 @@ const Booking = new mongoose.Schema({
       type: String
    },
    first_applicant_contactNumber: {
-      type: Number
+      type: String
    },
    first_applicant_email: {
       type: String
@@ -53,7 +53,7 @@ const Booking = new mongoose.Schema({
       type: String
    },
    first_applicant_AadharNumber: {
-      type: Number
+      type: String
    },
    first_applicant_pan_number: {
       type: String
@@ -86,7 +86,7 @@ const Booking = new mongoose.Schema({
       type: String
    },
    second_applicant_contact_number: {
-      type: Number
+      type: String
    },
    second_applicant_email: {
       type: String
@@ -113,19 +113,19 @@ const Booking = new mongoose.Schema({
       type: String
    },
    third_applicant_phone_number: {
-      type: Number
+      type: String
    },
    fourth_applicant_name: {
       type: String
    },
    fourth_applicant_phone_number: {
-      type: Number
+      type: String
    },
    price_with_tax: {
       type: String
    },
    totalAmount: {
-      type: Number,
+      type: String,
    },
    extra_facility: {
       type: Array
@@ -134,13 +134,13 @@ const Booking = new mongoose.Schema({
       type: Array
    },
    bookingPrice: {
-      type: Number
+      type: String
    },
    unitPrice: {
-      type: Number
+      type: String
    },
    pending:{
-      type: Number
+      type: String
    }
 })
 
