@@ -67,9 +67,8 @@ router.post('/create/unit', verifyToken, async (req, res) => {
             } catch (error) {
                 res.status(500).json(error);
             }
-
+            res.status(200).json(total);
         }
-        res.status(200).json(total);
     }
 });
 
