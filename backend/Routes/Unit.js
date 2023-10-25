@@ -7,40 +7,82 @@ const verifyToken = require('../config/Verification');
 // const {Project, building, unit_name, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities} = req.body
 // create Unit
 
-router.post('/create/unit',verifyToken,async(req,res)=>{
-    const {Project, building, unit_name,pricewithtax,sgst,cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities,price,totalPrice} = req.body;
-    const newUnit = new Units({
-        Project,
-        building,
-        unit_name,
-        total_area_this_unit,
-        carpet_area,
-        build_up_area,
-        balcony_area,
-        total_number_of_flat_on_this_unit,
-        parking_detail,
-        extra_facilities,
-        pricewithtax,
-        sgst,
-        cgst,
-        totalPrice,
-        price
-    });
-    try {
-        const savedUnit = await newUnit.save();
-        res.status(200).json(savedUnit);
-    } catch (error) {
-        res.status(500).json(error);
+/* This code is defining a route handler for creating a new unit. It expects the following properties
+in the request body: `Project`, `building`, `unit_name`, `pricewithtax`, `sgst`, `cgst`,
+`total_area_this_unit`, `carpet_area`, `build_up_area`, `balcony_area`,
+`total_number_of_flat_on_this_unit`, `parking_detail`, `extra_facilities`, `price`, `totalPrice`,
+`multiple`, `floors`, and `units`. */
+router.post('/create/unit', verifyToken, async (req, res) => {
+    const { Project, building, unit_name, pricewithtax, sgst, cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities, price, totalPrice, multiple, floors, units } = req.body;
+    if (!multiple) {
+
+        const newUnit = new Units({
+            Project,
+            building,
+            unit_name,
+            total_area_this_unit,
+            carpet_area,
+            build_up_area,
+            balcony_area,
+            total_number_of_flat_on_this_unit,
+            parking_detail,
+            extra_facilities,
+            pricewithtax,
+            sgst,
+            cgst,
+            totalPrice,
+            price
+        });
+        try {
+            const savedUnit = await newUnit.save();
+            res.status(200).json(savedUnit);
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    } else {
+        let total = [];
+        for (let i = 0; i < floors; i++) {
+            let unitName = "";
+            unitName.concat(`${i + 1}`);
+            unitName.concat(`${unit_name}`);
+            for (let j = 0; j < units; j++) {
+                unitName.concat(`${j + 1}`);
+                const newUnit = new Units({
+                    Project,
+                    building,
+                    unit_name:unitName,
+                    total_area_this_unit,
+                    carpet_area,
+                    build_up_area,
+                    balcony_area,
+                    total_number_of_flat_on_this_unit,
+                    parking_detail,
+                    extra_facilities,
+                    pricewithtax,
+                    sgst,
+                    cgst,
+                    totalPrice,
+                    price
+                });
+                try {
+                    const savedUnit = await newUnit.save();
+                    total.push(savedUnit);
+                } catch (error) {
+                    res.status(500).json(error);
+                }
+            }
+        }
+        res.status(200).json(total);
     }
 });
 
 // update unit
 
-router.put('/update/unit/:id',verifyToken,async(req,res)=>{
+router.put('/update/unit/:id', verifyToken, async (req, res) => {
     try {
         const unit = await Units.findById(req.params.id);
-        if(!unit) return res.status(404).send("unit not found");
-        const updatedUnit = await Units.findByIdAndUpdate(req.params.id,{$set:req.body});
+        if (!unit) return res.status(404).send("unit not found");
+        const updatedUnit = await Units.findByIdAndUpdate(req.params.id, { $set: req.body });
         res.status(200).json(updatedUnit);
     } catch (error) {
         res.status(500).json(error);
@@ -48,10 +90,10 @@ router.put('/update/unit/:id',verifyToken,async(req,res)=>{
 })
 
 // delete unit
-router.delete('/delete/unit/:id',verifyToken,async(req,res)=>{
+router.delete('/delete/unit/:id', verifyToken, async (req, res) => {
     try {
         const unit = await Units.findById(req.params.id);
-        if(!unit) return res.status(404).send("unit not found");
+        if (!unit) return res.status(404).send("unit not found");
         const deletedUnit = await Units.findByIdAndDelete(req.params.id);
         res.status(200).json(deletedUnit);
     } catch (error) {
@@ -60,10 +102,10 @@ router.delete('/delete/unit/:id',verifyToken,async(req,res)=>{
 })
 
 // get all unit
-router.get('/all/unit',verifyToken,async(req,res)=>{
-    const {page,limits} = req.query;
+router.get('/all/unit', verifyToken, async (req, res) => {
+    const { page, limits } = req.query;
     try {
-        const unit = await Units.find().sort({createdAt:-1}).skip((page-1)*limits).limit(limits);
+        const unit = await Units.find().sort({ createdAt: -1 }).skip((page - 1) * limits).limit(limits);
         res.status(200).json(unit);
     } catch (error) {
         res.status(500).json(error);
@@ -71,22 +113,22 @@ router.get('/all/unit',verifyToken,async(req,res)=>{
 })
 
 // get one unit
-router.get('/unit/:id',verifyToken,async(req,res)=>{
+router.get('/unit/:id', verifyToken, async (req, res) => {
     try {
         const unit = await Units.findById(req.params.id);
-        if(!unit) return res.status(404).send("unit not found");
+        if (!unit) return res.status(404).send("unit not found");
         res.status(200).json(unit);
     } catch (error) {
         res.status(500).json(error);
     }
 })
 
-router.get('/find/unit/:building/:project',verifyToken,async(req,res)=>{
-    if(!mongoose.isValidObjectId(req.params.building) || !mongoose.isValidObjectId(req.params.project)) return res.status(400).json("Provided Information is not Valid.");
+router.get('/find/unit/:building/:project', verifyToken, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.building) || !mongoose.isValidObjectId(req.params.project)) return res.status(400).json("Provided Information is not Valid.");
     const building = await Building.findById(req.params.building);
-    if(!building) return res.status(404).send("building not found");
+    if (!building) return res.status(404).send("building not found");
     try {
-        const unit = await Units.find({building:req.params.building,Project:req.params.project});
+        const unit = await Units.find({ building: req.params.building, Project: req.params.project });
         res.status(200).json(unit);
     } catch (error) {
         res.status(500).json(error);
@@ -115,7 +157,7 @@ router.get('/find/unit/available/:building/:project', verifyToken, async (req, r
         const bookedUnitIds = new Set(bookedUnits.map(bookedUnit => bookedUnit.unit.toString()));
         // Filter out units that are not booked
         const availableUnits = allUnits.filter(unit => !bookedUnitIds.has(unit._id.toString()));
-        res.status(200).json( availableUnits);
+        res.status(200).json(availableUnits);
     } catch (error) {
         res.status(500).json(error);
     }
