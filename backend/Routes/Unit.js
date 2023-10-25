@@ -43,10 +43,8 @@ router.post('/create/unit', verifyToken, async (req, res) => {
         let total = [];
         for (let i = 0; i < floors; i++) {
             let unitName = "";
-            unitName.concat(`${i + 1}`);
-            unitName.concat(`${unit_name}`);
             for (let j = 0; j < units; j++) {
-                unitName.concat(`${j + 1}`);
+                unitName = `${i + 1}${unit_name}${j + 1}`;
                 const newUnit = new Units({
                     Project,
                     building,
