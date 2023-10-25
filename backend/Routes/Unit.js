@@ -13,7 +13,7 @@ in the request body: `Project`, `building`, `unit_name`, `pricewithtax`, `sgst`,
 `total_number_of_flat_on_this_unit`, `parking_detail`, `extra_facilities`, `price`, `totalPrice`,
 `multiple`, `floors`, and `units`. */
 router.post('/create/unit', verifyToken, async (req, res) => {
-    const { Project, building, unit_name, pricewithtax, sgst, cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities, price, totalPrice, multiple, floors, units } = req.body;
+    const { Project, building, unit_name, pricewithtax, sgst, cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities, price, totalPrice, multiple, floors } = req.body;
     if (!multiple) {
 
         const newUnit = new Units({
@@ -43,34 +43,31 @@ router.post('/create/unit', verifyToken, async (req, res) => {
         let total = [];
         for (let i = 0; i < floors; i++) {
             let unitName = "";
-            unitName.concat(`${i + 1}`);
-            unitName.concat(`${unit_name}`);
-            for (let j = 0; j < units; j++) {
-                unitName.concat(`${j + 1}`);
-                const newUnit = new Units({
-                    Project,
-                    building,
-                    unit_name:unitName,
-                    total_area_this_unit,
-                    carpet_area,
-                    build_up_area,
-                    balcony_area,
-                    total_number_of_flat_on_this_unit,
-                    parking_detail,
-                    extra_facilities,
-                    pricewithtax,
-                    sgst,
-                    cgst,
-                    totalPrice,
-                    price
-                });
-                try {
-                    const savedUnit = await newUnit.save();
-                    total.push(savedUnit);
-                } catch (error) {
-                    res.status(500).json(error);
-                }
+            unitName = `${i + 1}${unit_name}`;
+            const newUnit = new Units({
+                Project,
+                building,
+                unit_name: unitName,
+                total_area_this_unit,
+                carpet_area,
+                build_up_area,
+                balcony_area,
+                total_number_of_flat_on_this_unit,
+                parking_detail,
+                extra_facilities,
+                pricewithtax,
+                sgst,
+                cgst,
+                totalPrice,
+                price
+            });
+            try {
+                const savedUnit = await newUnit.save();
+                total.push(savedUnit);
+            } catch (error) {
+                res.status(500).json(error);
             }
+
         }
         res.status(200).json(total);
     }
