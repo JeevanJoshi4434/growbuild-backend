@@ -14,8 +14,9 @@ in the request body: `Project`, `building`, `unit_name`, `pricewithtax`, `sgst`,
 `multiple`, `floors`, and `units`. */
 router.post('/create/unit', verifyToken, async (req, res) => {
     const { Project, building, unit_name, pricewithtax, sgst, cgst, total_area_this_unit, carpet_area, build_up_area, balcony_area, total_number_of_flat_on_this_unit, parking_detail, extra_facilities, price, totalPrice, multiple, floors } = req.body;
-    if (!multiple) {
+    const unitsToSave = []; // Create an array to store the unit objects
 
+    if (!multiple) {
         const newUnit = new Units({
             Project,
             building,
@@ -33,17 +34,10 @@ router.post('/create/unit', verifyToken, async (req, res) => {
             totalPrice,
             price
         });
-        try {
-            const savedUnit = await newUnit.save();
-            res.status(200).json(savedUnit);
-        } catch (error) {
-            res.status(500).json(error);
-        }
+        unitsToSave.push(newUnit); // Add the unit object to the array
     } else {
-        let total = [];
         for (let i = 0; i < floors; i++) {
-            let unitName = "";
-            unitName = `${i + 1}${unit_name}`;
+            let unitName = `${i + 1}${unit_name}`;
             const newUnit = new Units({
                 Project,
                 building,
@@ -61,16 +55,18 @@ router.post('/create/unit', verifyToken, async (req, res) => {
                 totalPrice,
                 price
             });
-            try {
-                const savedUnit = await newUnit.save();
-                total.push(savedUnit);
-            } catch (error) {
-                res.status(500).json(error);
-            }
-            res.status(200).json(total);
+            unitsToSave.push(newUnit); // Add the unit object to the array
         }
     }
+
+    try {
+        const savedUnits = await Units.insertMany(unitsToSave); // Save all units in the array
+        res.status(200).json(savedUnits);
+    } catch (error) {
+        res.status(500).json(error);
+    }
 });
+
 
 // update unit
 
