@@ -6,14 +6,13 @@ const Demands = require('../Models/Demands');
 // create Demand
 
 router.post('/create/demand',verifyToken,async(req,res)=>{
-    const {Project, Building, stage_name, amount, extra_facilities,Status} = req.body;
+    const {Project, Building, stage_name, amount, extra_facilities,} = req.body;
     const newDemand = new Demands({
         Project,
         Building,
         stage_name,
         amount,
         extra_facilities,
-        Status
     })
     try {
         const savedDemand = await newDemand.save();
@@ -62,6 +61,17 @@ router.get('/demand/percent/:id/:p', verifyToken, async (req, res) => {
     }
 });
 
+
+router.get('/demand/status/:b/:p/:type',verifyToken,async(req,res)=>{
+    if(req.params.type !== "completed" && req.params.type !== "pending") return res.status(400).json("Invalid Type");
+    try{
+        const demand = await Demands.find({Building:req.params.b,Project:req.params.p,Status:req.params.type});
+    if(!demand) return res.status(201).json("Not Found!");
+        res.status(200).json(demand);
+    }catch(error){
+        res.status(500).json(error)
+    }
+})
 
 // delete
 router.delete('/delete/demand/:id',verifyToken,async(req,res)=>{
