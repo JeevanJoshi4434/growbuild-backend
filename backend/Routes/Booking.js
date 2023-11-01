@@ -110,7 +110,6 @@ router.get('/get/all/booking',verifyToken,async(req,res)=>{
 })
 
 router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
-    try {
         const booking = await Bookings.findOne({ building: req.params.id, Project: req.params.project, unit: req.params.unit });
         if (!booking) return res.status(201).send('Booking not found');
     
@@ -138,9 +137,6 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
         // Concatenate the demands from booking, and reassign to 'demand'
         demand = demand.concat(booking.demands);
     
-        res.status(200).json({ booking, demand, pending: TotalPending });
-    } catch (error) {
-        res.status(500).json(error);
-    }    
+        res.status(200).json({ booking, demand, pending: TotalPending });  
 })
 module.exports = router;
