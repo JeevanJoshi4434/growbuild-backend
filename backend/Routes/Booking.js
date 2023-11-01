@@ -4,9 +4,9 @@ const verifyToken = require('../config/Verification');
 const Bookings = require('../Models/Bookings');
 const Demand = require('../Models/Demands');
 // create Booking
-router.post('/create/booking',verifyToken,async(req,res)=>{
-    const {Project, totalAmount,bookingPrice,unitPrice,demands, building, floor, unit, extra_facility, parking, booking_price, booking_date, allotment_date, agreement_date, first_applicant_name, first_applicant_father_name, first_applicant_husband_name, first_applicant_permanentAddress, first_applicant_correspondAddress,first_applicant_contactNumber, first_applicant_email, first_applicant_dob, first_applicant_AadharNumber, first_applicant_pan_number, first_applicant_City, first_applicant_police_station, first_applicant_country, first_applicant_occupation, first_applicant_religion, first_applicant_status, second_applicant_name, second_applicant_father_name, second_applicant_husband_name, second_applicant_contact_number, second_applicant_email, second_applicant_dob, second_applicant_pan_number, second_applicant_occupation, second_applicant_address, second_applicant_relation_with_first_applicant, third_applicant_name, third_applicant_phone_number, fourth_applicant_name, fourth_applicant_phone_number,second_applicant_adhar_number,price_with_tax} = req.body;
-    const demand = await Demand.find({Project:Project,Building:building,Status:'completed'});
+router.post('/create/booking', verifyToken, async (req, res) => {
+    const { Project, totalAmount, bookingPrice, unitPrice, demands, building, floor, unit, extra_facility, parking, booking_price, booking_date, allotment_date, agreement_date, first_applicant_name, first_applicant_father_name, first_applicant_husband_name, first_applicant_permanentAddress, first_applicant_correspondAddress, first_applicant_contactNumber, first_applicant_email, first_applicant_dob, first_applicant_AadharNumber, first_applicant_pan_number, first_applicant_City, first_applicant_police_station, first_applicant_country, first_applicant_occupation, first_applicant_religion, first_applicant_status, second_applicant_name, second_applicant_father_name, second_applicant_husband_name, second_applicant_contact_number, second_applicant_email, second_applicant_dob, second_applicant_pan_number, second_applicant_occupation, second_applicant_address, second_applicant_relation_with_first_applicant, third_applicant_name, third_applicant_phone_number, fourth_applicant_name, fourth_applicant_phone_number, second_applicant_adhar_number, price_with_tax } = req.body;
+    const demand = await Demand.find({ Project: Project, Building: building, Status: 'completed' });
     const newBooking = new Bookings({
         Project,
         building,
@@ -53,90 +53,95 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         extra_facility,
         bookingPrice,
         unitPrice,
-        demands:demand,
-        pending:(totalAmount-booking_price)
+        demands: demand,
+        pending: (totalAmount - booking_price)
     })
-        const savedBooking = await newBooking.save();
-        res.status(200).json(savedBooking);
+    const savedBooking = await newBooking.save();
+    res.status(200).json(savedBooking);
 
 })
 
 // update booking
-router.put('/update/booking/:id',verifyToken,async(req,res)=>{
+router.put('/update/booking/:id', verifyToken, async (req, res) => {
     const Booking = await Bookings.findById(req.params.id);
-    if(!Booking) return res.status(404).send('Booking not found');
-    try{
-        const updatedBooking = await Bookings.findByIdAndUpdate(req.params.id, {$set:req.body})
+    if (!Booking) return res.status(404).send('Booking not found');
+    try {
+        const updatedBooking = await Bookings.findByIdAndUpdate(req.params.id, { $set: req.body })
         res.status(200).json(updatedBooking);
-    } catch (error){
+    } catch (error) {
         res.status(500).json(error);
     }
 })
 
 // delete booking
 
-router.delete('/delete/booking/:id',verifyToken,async(req,res)=>{
+router.delete('/delete/booking/:id', verifyToken, async (req, res) => {
     const Booking = await Bookings.findById(req.params.id);
-    if(!Booking) return res.status(404).send('Booking not found');
-    try{
+    if (!Booking) return res.status(404).send('Booking not found');
+    try {
         const deletedBooking = await Bookings.findByIdAndDelete(req.params.id);
         res.status(200).json(deletedBooking);
-    } catch (error){
+    } catch (error) {
         res.status(500).json(error);
     }
 })
 
 // get one booking
-router.get('/get/booking/:id',verifyToken,async(req,res)=>{
+router.get('/get/booking/:id', verifyToken, async (req, res) => {
     const Booking = await Bookings.findById(req.params.id);
-    if(!Booking) return res.status(404).send('Booking not found');
-    try{
+    if (!Booking) return res.status(404).send('Booking not found');
+    try {
         const booking = await Bookings.findById(req.params.id);
         res.status(200).json(booking);
-    } catch (error){
+    } catch (error) {
         res.status(500).json(error);
     }
 })
 
 // get all booking
-router.get('/get/all/booking',verifyToken,async(req,res)=>{
-    const {page, limits} = req.query;
-    try{
-        const bookings = await Bookings.find().sort({createdAt:-1}).skip((page-1)*limits).limit(limits);
+router.get('/get/all/booking', verifyToken, async (req, res) => {
+    const { page, limits } = req.query;
+    try {
+        const bookings = await Bookings.find().sort({ createdAt: -1 }).skip((page - 1) * limits).limit(limits);
         res.status(200).json(bookings);
-    } catch (error){
+    } catch (error) {
         res.status(500).json(error);
     }
 })
 
-router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
+router.get('/:id/:project/:unit', verifyToken, async (req, res) => {
+    try {
+
         const booking = await Bookings.findOne({ building: req.params.id, Project: req.params.project, unit: req.params.unit });
         if (!booking) return res.status(201).send('Booking not found');
-    
+
         let demand = await Demand.find({ Building: req.params.id, Project: req.params.project, Status: 'completed' });
-        console.log({ discovered: demand });
-    
+        let completedArray = [];
+        completedArray = demand.filter((d) => {
+            if (booking.demands.includes(new mongoose.Types.ObjectId(d._id))) return d;
+        });
         demand = demand.filter((d) => {
             if (booking.pendingDemands.includes(new mongoose.Types.ObjectId(d._id))) return d;
         });
-        console.log({ filtered: demand });
-    
+
         demand = demand.map((d) => {
             d.Status = 'pending';
             return d;
         });
-        console.log({ statusChanged: demand });
-    
+
         let costPercentage = 0;
         demand.forEach((i) => {
             costPercentage += i.amount;
         });
-    
+
         const TotalPending = parseInt(booking.pending) + parseInt(booking.pending * (costPercentage / 100));
-    
+
         // Concatenate the demands from booking, and reassign to 'demand'
-        demand = demand.concat(booking.demands);
-    
-        res.status(200).json({ booking, demand, pending: TotalPending });  
+        demand = demand.concat(completedArray);
+
+        res.status(200).json({ booking, demand, pending: TotalPending });
+    } catch (e) {
+        return res.status(500).json({error:e});
+    }
 })
 module.exports = router;

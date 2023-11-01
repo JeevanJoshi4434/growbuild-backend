@@ -39,8 +39,8 @@ router.post('/create/buyermaster',verifyToken, async (req, res) => {
                 demands:bookingData.pendingDemands,
             },
             $set:{
-                pending:(balance-payment_receive),
-                pendingDemands:[]
+                pendingDemands:[],
+                pending:(balance-payment_receive)
             },
         });
         const savedBuyermaster = await newBuyermaster.save();
