@@ -35,24 +35,22 @@ router.put('/update/demand/:id', verifyToken, async (req, res) => {
     try {
         let multiple = false;
         const updatedDemand = await Demands.findByIdAndUpdate(req.params.id, { $set: req.body });
-        if (req.body.onlyStatus) {
-            const bookings = await BookingModal.find({ building: demand.Building, Project: demand.Project });
-            for (const booking of bookings) {
-                // Calculate the new "pending" value as the previous value plus 10% of the difference
-                const newPending = booking.pending + (booking.totalAmount - booking.booking_price) * 0.10;
+        const bookings = await BookingModal.find({ building: demand.Building, Project: demand.Project });
+        for (const booking of bookings) {
+            // Calculate the new "pending" value as the previous value plus 10% of the difference
+            const newPending = booking.pending + (booking.totalAmount - booking.booking_price) * 0.10;
 
-                // Update the document with the new "pending" value
-                await BookingModal.updateOne(
-                    { _id: booking._id },
-                    { 
+            // Update the document with the new "pending" value
+            await BookingModal.updateOne(
+                { _id: booking._id },
+                {
                     $set: { pending: newPending },
-                    $push:{ demands:demand._id} 
-                    }
-                );
-                multiple = true;
-            }
+                    $push: { pendingDemands: demand._id }
+                }
+            );
         }
-        res.status(200).json({ updatedDemand, multiple });
+
+        res.status(200).json(updatedDemand);
     } catch (err) {
         res.status(500).json(err);
     }

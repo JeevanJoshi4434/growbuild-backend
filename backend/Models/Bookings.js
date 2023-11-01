@@ -133,6 +133,9 @@ const Booking = new mongoose.Schema({
    demands: {
       type: Array
    },
+   pendingDemands: {
+      type: Array
+   },
    bookingPrice: {
       type: Number
    },

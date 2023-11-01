@@ -32,10 +32,16 @@ router.post('/create/buyermaster',verifyToken, async (req, res) => {
         balance:(balance-payment_receive)
     })
     try {
-        const booking = await Bookings.findOneAndUpdate({building:Building,Project:Project,unit:unit},{
+        const bookingData = await Bookings.findOne({building:Building,Project:Project,unit:unit});
+
+        const booking = await Bookings.findOneAndUpdate({building:Building,Project:Project,unit:unit},{          
+            $push:{
+                demands:bookingData.pendingDemands,
+            },
             $set:{
-                pending:(balance-payment_receive)
-            }
+                pending:(balance-payment_receive),
+                pendingDemands:[]
+            },
         });
         const savedBuyermaster = await newBuyermaster.save();
         res.status(200).json(savedBuyermaster);

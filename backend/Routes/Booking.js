@@ -113,9 +113,9 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
         const booking = await Bookings.findOne({building:req.params.id,Project:req.params.project,unit:req.params.unit});
         if(!booking) return res.status(201).send('Booking not found');
         const demand = await Demand.find({Building:req.params.id,Project:req.params.project,Status:'completed'});
-        console.log(demand);
+        console.log({filtered:demand});
         demand.filter((d)=>{
-            if(!booking.demands.includes(d._id)) return d;
+            if(booking.pendingDemands.includes(d._id)) return d;
         });
         console.log({filtered:demand});
         let costPercentage =0;
