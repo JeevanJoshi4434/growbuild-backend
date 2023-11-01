@@ -117,7 +117,7 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
         console.log({ discovered: demand });
     
         demand = demand.filter((d) => {
-            if (booking.pendingDemands.includes(mongoose.Types.ObjectId(d._id))) return d;
+            if (booking.pendingDemands.includes(new mongoose.Types.ObjectId(d._id))) return d;
         });
         console.log({ filtered: demand });
     
