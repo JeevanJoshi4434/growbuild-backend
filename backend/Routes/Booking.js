@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const verifyToken = require('../config/Verification');
 const Bookings = require('../Models/Bookings');
-
+const Demand = require('../Models/Demands');
 // create Booking
 router.post('/create/booking',verifyToken,async(req,res)=>{
     const {Project, totalAmount,bookingPrice,unitPrice,demands, building, floor, unit, extra_facility, parking, booking_price, booking_date, allotment_date, agreement_date, first_applicant_name, first_applicant_father_name, first_applicant_husband_name, first_applicant_permanentAddress, first_applicant_correspondAddress,first_applicant_contactNumber, first_applicant_email, first_applicant_dob, first_applicant_AadharNumber, first_applicant_pan_number, first_applicant_City, first_applicant_police_station, first_applicant_country, first_applicant_occupation, first_applicant_religion, first_applicant_status, second_applicant_name, second_applicant_father_name, second_applicant_husband_name, second_applicant_contact_number, second_applicant_email, second_applicant_dob, second_applicant_pan_number, second_applicant_occupation, second_applicant_address, second_applicant_relation_with_first_applicant, third_applicant_name, third_applicant_phone_number, fourth_applicant_name, fourth_applicant_phone_number,second_applicant_adhar_number,price_with_tax} = req.body;
@@ -54,7 +54,7 @@ router.post('/create/booking',verifyToken,async(req,res)=>{
         bookingPrice,
         unitPrice,
         demands:demand,
-        pending:booking_price-totalAmount
+        pending:(totalAmount-booking_price)
     })
         const savedBooking = await newBooking.save();
         res.status(200).json(savedBooking);
@@ -113,7 +113,16 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
     try{
         const booking = await Bookings.findOne({building:req.params.id,Project:req.params.project,unit:req.params.unit});
         if(!booking) return res.status(201).send('Booking not found');
-        res.status(200).json(booking);
+        const demand = await Demand.find({building:req.params.id,Project:req.params.project,Status:'completed'});
+        demand.filter((d)=>{
+            if(!booking.demands.includes(d._id)) return d;
+        });
+        let costPercentage =0;
+        demand.forEach(i => {
+            costPercentage += i.amount;
+        });
+        const TotalPending = parseInt(booking.pending) + parseInt(booking.pending * (costPercentage/100));
+        res.status(200).json({booking,demand,pending:TotalPending});
     } catch (error){
         res.status(500).json(error);
     }
