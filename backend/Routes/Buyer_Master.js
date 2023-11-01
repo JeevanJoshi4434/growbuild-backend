@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const verifyToken = require('../config/Verification');
 const Buyermaster = require('../Models/Buyermaster');
+const Bookings = require('../Models/Bookings');
 // const {ProProject, Building, floor, unit, secondfloor, flat, parking, booking_price,booking_date, allotment_date, agreement_date} = req.body;
 // create
 router.post('/create/buyermaster',verifyToken, async (req, res) => {
-    const { Project, Building, floor, unit, secondfloor, flat, parking, booking_price, booking_date, allotment_date, agreement_date, Owner_name, payment_stage, price, payment_receive, payment_type, check_number, date, bank_name, branch_name, bank_account, card_number } = req.body;
+    const { Project, Building, floor, unit, secondfloor, flat, parking, booking_price, booking_date, allotment_date, agreement_date, Owner_name, payment_stage, price, payment_receive, payment_type, check_number, date, bank_name, branch_name, bank_account, card_number,balance } = req.body;
     const newBuyermaster = new Buyermaster({
         Project,
         Building,
@@ -28,8 +29,14 @@ router.post('/create/buyermaster',verifyToken, async (req, res) => {
         branch_name,
         bank_account,
         card_number,
+        balance:(balance-payment_receive)
     })
     try {
+        const booking = await Bookings.findOneAndUpdate({building:Building,Project:Project,unit:unit},{
+            $set:{
+                pending:(balance-payment_receive)
+            }
+        });
         const savedBuyermaster = await newBuyermaster.save();
         res.status(200).json(savedBuyermaster);
     } catch (err) {
