@@ -113,8 +113,15 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
         const booking = await Bookings.findOne({building:req.params.id,Project:req.params.project,unit:req.params.unit});
         if(!booking) return res.status(201).send('Booking not found');
         const demand = await Demand.find({Building:req.params.id,Project:req.params.project,Status:'completed'});
-        console.log({filtered:demand});
-        demand.filter((d)=>{
+        console.log({discovered:demand});
+        demand = demand.map(d => {
+            if (booking.pendingDemands.includes(d._id)) {
+                d.Status = 'pending';
+            }
+            return d;
+        });
+        console.log({statusChanged:demand});
+        demand = demand.filter((d)=>{
             if(booking.pendingDemands.includes(d._id)) return d;
         });
         console.log({filtered:demand});
@@ -123,6 +130,7 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
             costPercentage += i.amount;
         });
         const TotalPending = parseInt(booking.pending) + parseInt(booking.pending * (costPercentage/100));
+        demand.concat(booking.demands);
         res.status(200).json({booking,demand,pending:TotalPending});
     } catch (error){
         res.status(500).json(error);
