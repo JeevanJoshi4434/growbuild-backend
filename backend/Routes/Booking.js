@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { default: mongoose } = require('mongoose');
 const verifyToken = require('../config/Verification');
 const Bookings = require('../Models/Bookings');
 const Demand = require('../Models/Demands');
@@ -114,17 +115,15 @@ router.get('/:id/:project/:unit',verifyToken,async(req,res)=>{
         if(!booking) return res.status(201).send('Booking not found');
         const demand = await Demand.find({Building:req.params.id,Project:req.params.project,Status:'completed'});
         console.log({discovered:demand});
+        demand = demand.filter((d)=>{
+            if(booking.pendingDemands.includes(mongoose.Types.ObjectId(d._id))) return d;
+        });
+        console.log({filtered:demand});
         demand = demand.map(d => {
-            if (booking.pendingDemands.includes(d._id)) {
                 d.Status = 'pending';
-            }
             return d;
         });
         console.log({statusChanged:demand});
-        demand = demand.filter((d)=>{
-            if(booking.pendingDemands.includes(d._id)) return d;
-        });
-        console.log({filtered:demand});
         let costPercentage =0;
         demand.forEach(i => {
             costPercentage += i.amount;
