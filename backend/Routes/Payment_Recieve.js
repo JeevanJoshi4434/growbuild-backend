@@ -91,7 +91,6 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
         project: projectR.Name,
         building: buildingR.buildingName
     }
-    try {
         const paymentR = payment.filter((item) => {
             if (item.Project == project && item.building == building) {
                 return item;
@@ -113,9 +112,7 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
             data.push(obj);
         }
         res.status(200).json({ err: 0, data, profile });
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    
 })
 
 
@@ -128,7 +125,6 @@ router.get('/get/all/payment/due/:building/:unit',  async (req, res) => {
         building: buildingR.buildingName,
         unit
     }
-    try {
         const booking = await Bookings.findOne({building: building, unit: unit});
         if (!booking) return res.status(404).json("Not Found!");
         let data = [];
@@ -145,10 +141,7 @@ router.get('/get/all/payment/due/:building/:unit',  async (req, res) => {
             data.push(obj);
         }
         res.status(200).json({ err: 0, data, profile,total });
-    }
-    catch (err) {
-        res.status(500).json(err);
-    }
+    
 })
 
 router.get('/get/all/payment/single/:building/:unit',  async (req, res) => {
@@ -163,7 +156,6 @@ router.get('/get/all/payment/single/:building/:unit',  async (req, res) => {
         unitDetails:unitR
 
     }
-    try {
         const booking = await Bookings.findOne({building: building, unit: unit});
         if (!booking) return res.status(404).json("Not Found!");
         let data = [];
@@ -181,10 +173,7 @@ router.get('/get/all/payment/single/:building/:unit',  async (req, res) => {
         }
         res.status(200).json({ err: 0, data, profile,total,booking});
     }
-    catch (err) {
-        res.status(500).json(err);
-    }
-})
+)
 
 // get all 
 router.get('/get/all/payment', verifyToken, async (req, res) => {
