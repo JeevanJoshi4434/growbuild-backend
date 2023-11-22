@@ -138,7 +138,8 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
     let total = 0;
     for (let i = 0; i < booking.pendingDemands.length; i++) {
         let obj = {};
-        const data = await deemandModal.findById(mongoose.Types.ObjectId(booking.pendingDemands[i]));
+        const objectID = booking.pendingDemands[i].toString();
+        const data = await deemandModal.findById(objectID);
         if (!data) continue;
         total += data.amount;
         obj = {
@@ -172,7 +173,8 @@ router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
     for (let i = 0; i < booking.demands.length; i++) {
         let total = 0;
         let obj = {};
-        const data = await deemandModal.findById(mongoose.Types.ObjectId(booking.demands[i]));
+        const objectID = booking.demands[i].toString();
+        const data = await deemandModal.findById(objectID);
         if (!data) continue;
         total += data.amount;
         obj = {
