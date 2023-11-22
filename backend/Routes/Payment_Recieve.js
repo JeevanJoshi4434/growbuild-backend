@@ -7,6 +7,7 @@ const paymentRecieve = require('../Models/paymentRecieve');
 const Units = require('../Models/Units');
 const deemandModal = require('../Models/Demands');
 const Buyermaster = require('../Models/Buyermaster');
+const { default: mongoose } = require('mongoose');
 // create
 router.post('/create/payment', verifyToken, async (req, res) => {
     const { BookingID, Payment_Number, Paymentdate, payment_head, PaymentAmount, sgst, cgst, Stax, narration, narration_amount, check, DD, rtgs, neft, net_banking, credit_card, bounced, bank, branch, amount, totalAmount, leftAmount, paidAmount } = req.body;
@@ -102,7 +103,7 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     let dataArray = [];
     for (let i = 0; i < paymentR.length; i++) {
         let obj = {};
-        const data = await Buyermaster.find({ Project: project, Building: building });
+        const data = await Buyermaster.findOne({ Project: project, Building: building });
         if (!data) continue;
         obj = {
             name: paymentR[i].first_applicant_name,
@@ -131,13 +132,13 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
     }
     console.log({ building: buildingR, unit: unit });
     const booking = await Bookings.findOne({ building: building, unit: unit });
-    console.log({ booking: booking });
     if (!booking) return res.status(404).json("Not Found!");
+    console.log({ booking: booking });
     let dataArray = [];
     let total = 0;
     for (let i = 0; i < booking.pendingDemands.length; i++) {
         let obj = {};
-        const data = await deemandModal.findById(booking.pendingDemands[i]);
+        const data = await deemandModal.findById(mongoose.Types.ObjectId(booking.pendingDemands[i]));
         if (!data) continue;
         total += data.amount;
         obj = {
@@ -171,7 +172,7 @@ router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
     for (let i = 0; i < booking.demands.length; i++) {
         let total = 0;
         let obj = {};
-        const data = await deemandModal.findById(booking.demands[i]);
+        const data = await deemandModal.findById(mongoose.Types.ObjectId(booking.demands[i]));
         if (!data) continue;
         total += data.amount;
         obj = {
