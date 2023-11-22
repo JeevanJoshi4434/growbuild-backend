@@ -87,6 +87,7 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     if (!buildingR) return res.status(404).json("Not Found!");
     const payment = await Bookings.find({ Project: project, building: building });
     if (!payment) return res.status(404).json("Not Found!");
+    console.log({project:projectR,building:buildingR,payment:payment});
     const profile = {
         project: projectR.Name,
         building: buildingR.buildingName
@@ -96,7 +97,8 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
                 return item;
             }
         });
-        let data = [];
+        console.log({total:paymentR});
+        let dataArray = [];
         for (let i = 0; i < paymentR.length; i++) {
             let obj = {};
             const data = await paymentRecieve.find({ BookingID: paymentR[i]._id });
@@ -109,9 +111,10 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
                 mode: data.check ? `Cheque` : data.DD ? `DD` : data.rtgs ? `RTGS` : data.neft ? `NEFT` : data.net_banking ? `Net Banking` : data.credit_card ? `Credit Card` : `Bounced`,
                 date: data[0].date
             };
-            data.push(obj);
+            console.log({object:obj});
+            dataArray.push(obj);
         }
-        res.status(200).json({ err: 0, data, profile });
+        res.status(200).json({ err: 0, dataArray, profile });
     
 })
 
@@ -125,9 +128,11 @@ router.get('/get/all/payment/due/:building/:unit',  async (req, res) => {
         building: buildingR.buildingName,
         unit
     }
+    console.log({building:buildingR,unit:unit});
         const booking = await Bookings.findOne({building: building, unit: unit});
+        console.log({booking:booking});
         if (!booking) return res.status(404).json("Not Found!");
-        let data = [];
+        let dataArray = [];
         for (let i = 0; i < booking.pendingDemands.length; i++) {
             const total = 0;
             let obj = {};
@@ -138,9 +143,10 @@ router.get('/get/all/payment/due/:building/:unit',  async (req, res) => {
                 name: data.stage_name,
                 amount: data.amount,
             };
-            data.push(obj);
+            console.log({data,object:obj});
+            dataArray.push(obj);
         }
-        res.status(200).json({ err: 0, data, profile,total });
+        res.status(200).json({ err: 0, dataArray, profile,total });
     
 })
 
@@ -156,9 +162,11 @@ router.get('/get/all/payment/single/:building/:unit',  async (req, res) => {
         unitDetails:unitR
 
     }
+    console.log({building:buildingR,unit:unitR});
         const booking = await Bookings.findOne({building: building, unit: unit});
         if (!booking) return res.status(404).json("Not Found!");
-        let data = [];
+        let dataArray = [];
+        console.log({bk:booking});
         for (let i = 0; i < booking.demands.length; i++) {
             const total = 0;
             let obj = {};
@@ -169,9 +177,10 @@ router.get('/get/all/payment/single/:building/:unit',  async (req, res) => {
                 name: data.stage_name,
                 amount: data.amount,
             };
-            data.push(obj);
+            console.log({data:data,object:obj});
+            dataArray.push(obj);
         }
-        res.status(200).json({ err: 0, data, profile,total,booking});
+        res.status(200).json({ err: 0, dataArray, profile,total,booking});
     }
 )
 
