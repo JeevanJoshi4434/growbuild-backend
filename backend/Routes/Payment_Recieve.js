@@ -170,8 +170,8 @@ router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
     if (!booking) return res.status(404).json("Not Found!");
     let dataArray = [];
     console.log({ bk: booking });
+    let total = 0;
     for (let i = 0; i < booking.demands.length; i++) {
-        let total = 0;
         let obj = {};
         const objectID = booking.demands[i].toString();
         const data = await deemandModal.findById(objectID);
