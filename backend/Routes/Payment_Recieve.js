@@ -100,26 +100,33 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
         }
     });
     console.log({ total: paymentR });
+    let dataArray = [];
+    let obj = {};
     for (let i = 0; i < paymentR.length; i++) {
-        let obj = {};
-        const data = await Buyermaster.find({ Project: project, Building: building });
-        if (!data) continue;
         const UnitR = await Units.findById(paymentR[i].unit);
-        let dataArray = [];
-        for (let i = 0; i < data.length; i++) {
-            let obj = {};
-            obj = {
-                name: data[i].first_applicant_name,
-                unit: UnitR ? UnitR.unit_name : 'Not Associated',
-                amount: data[i].payment_receive,
-                mode: data[i].payment_type,
-                balance: data[i].balance
-            };
-            dataArray.push(obj);
-        }
+        obj = {
+            name: UnitR.unit_name,
+            unit: UnitR ? UnitR.unit_name : 'Not Associated',
+            amount: paymentR[i].bookingPrice,
+            mode: '--',
+            balance: (paymentR[i].totalAmount) - (paymentR[i].bookingPrice)
+        };
+        dataArray.push(obj);
     }
-    console.log({ object: dataArray });
-    dataArray.push(obj);
+    console.log({ first: dataArray });
+    const data = await Buyermaster.find({ Project: project, Building: building });
+    for (let i = 0; i < data.length; i++) {
+        const UnitR = await Units.findById(data[i].unit);
+        obj = {
+            name: UnitR?.unit_name,
+            unit: UnitR ? UnitR?.unit_name : 'Not Associated',
+            amount: data[i].payment_receive,
+            mode: data[i].payment_type,
+            balance: data[i].balance
+        };
+        dataArray.push(obj);
+    }
+    console.log({ second: dataArray });
     res.status(200).json({ err: 0, dataArray, profile });
 
 })
