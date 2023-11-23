@@ -111,7 +111,6 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
             obj = {
                 name: data[i].first_applicant_name,
                 unit: UnitR ? UnitR.unit_name : 'Not Associated',
-                floor: paymentR[i].floor,
                 amount: data[i].payment_receive,
                 mode: data[i].payment_type,
                 balance: data[i].balance
