@@ -100,23 +100,27 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
         }
     });
     console.log({ total: paymentR });
-    let dataArray = [];
     for (let i = 0; i < paymentR.length; i++) {
         let obj = {};
-        const data = await Buyermaster.findOne({ Project: project, Building: building });
+        const data = await Buyermaster.find({ Project: project, Building: building });
         if (!data) continue;
         const UnitR = await Units.findById(paymentR[i].unit);
-        obj = {
-            name: paymentR[i].first_applicant_name,
-            unit: UnitR ? UnitR.unit_name : 'Not Associated',
-            floor: paymentR[i].floor,
-            amount: data.payment_receive,
-            mode: data.payment_type,
-            balance: data.balance
-        };
-        console.log({ object: obj });
-        dataArray.push(obj);
+        let dataArray = [];
+        for (let i = 0; i < data.length; i++) {
+            let obj = {};
+            obj = {
+                name: data[i].first_applicant_name,
+                unit: UnitR ? UnitR.unit_name : 'Not Associated',
+                floor: paymentR[i].floor,
+                amount: data[i].payment_receive,
+                mode: data[i].payment_type,
+                balance: data[i].balance
+            };
+            dataArray.push(obj);
+        }
     }
+    console.log({ object: dataArray });
+    dataArray.push(obj);
     res.status(200).json({ err: 0, dataArray, profile });
 
 })
@@ -131,7 +135,7 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
     if (!unitR) return res.status(404).json("Not Found!");
     const profile = {
         building: buildingR.buildingName,
-        unit:unitR.unit_name
+        unit: unitR.unit_name
     }
     console.log({ building: buildingR, unit: unit });
     const booking = await Bookings.findOne({ building: building, unit: unit });
@@ -169,7 +173,7 @@ router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
 
     }
     console.log({ building: buildingR, unit: unitR });
-    
+
     const PaymentTotal = await Buyermaster.find({ unit: unit, Building: building });
     const booking = await Bookings.findOne({ building: building, unit: unit });
     if (!booking) return res.status(404).json("Not Found!");
@@ -189,7 +193,7 @@ router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
         console.log({ data: data, object: obj });
         dataArray.push(obj);
     }
-    res.status(200).json({ err: 0, dataArray, profile, total, booking,PaymentTotal});
+    res.status(200).json({ err: 0, dataArray, profile, total, booking, PaymentTotal });
 }
 )
 
