@@ -104,8 +104,9 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     let obj = {};
     for (let i = 0; i < paymentR.length; i++) {
         const UnitR = await Units.findById(paymentR[i].unit);
+        const userR = await Bookings.findOne({unit: paymentR[i].unit});
         obj = {
-            name: UnitR.unit_name,
+            name:  userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
             amount: paymentR[i].bookingPrice,
             mode: '--',
@@ -117,9 +118,10 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     const data = await Buyermaster.find({ Project: project, Building: building });
     for (let i = 0; i < data.length; i++) {
         const UnitR = await Units.findById(data[i].unit);
+        const userR = await Bookings.findOne({unit: data[i].unit});
         obj = {
-            name: UnitR?.unit_name,
-            unit: UnitR ? UnitR?.unit_name : 'Not Associated',
+            name: userR ? userR.first_applicant_name : 'Not Found',
+            unit: UnitR ? UnitR?.unit_name : 'Not Found',
             amount: data[i].payment_receive,
             mode: data[i].payment_type,
             balance: data[i].balance
@@ -136,12 +138,14 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
     const { building, unit } = req.params;
     if (!building || !unit) return res.status(404).json("Not Found!");
     const buildingR = await buildingModal.findById(building);
+    const projectR = await projectModal.findById(buildingR.Project);
     if (!buildingR) return res.status(404).json("Not Found!");
     const unitR = await Units.findById(unit);
     if (!unitR) return res.status(404).json("Not Found!");
     const profile = {
         building: buildingR.buildingName,
-        unit: unitR.unit_name
+        unit: unitR.unit_name,
+        project: projectR.Name ? projectR.Name : 'Not Found'
     }
     console.log({ building: buildingR, unit: unit });
     const booking = await Bookings.findOne({ building: building, unit: unit });
