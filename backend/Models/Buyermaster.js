@@ -53,7 +53,8 @@ const BuyerMaster = new mongoose.Schema({
         type: String
     },
     date: {
-        type: String
+        type: String,
+        default: Date.now()
     },
     bank_name: {
         type: String
