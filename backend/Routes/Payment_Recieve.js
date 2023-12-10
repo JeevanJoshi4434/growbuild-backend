@@ -108,9 +108,9 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
         obj = {
             name:  userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
-            amount: paymentR[i].bookingPrice,
+            amount: paymentR[i].bookingPrice.toFixed(2),
             mode: '--',
-            balance: (paymentR[i].totalAmount) - (paymentR[i].bookingPrice)
+            balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2))
         };
         dataArray.push(obj);
     }
@@ -122,9 +122,9 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
         obj = {
             name: userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR?.unit_name : 'Not Found',
-            amount: data[i].payment_receive,
+            amount: data[i].payment_receive.toFixed(2),
             mode: data[i].payment_type,
-            balance: data[i].balance
+            balance: data[i].balance.toFixed(2)
         };
         dataArray.push(obj);
     }
@@ -132,6 +132,82 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     res.status(200).json({ err: 0, dataArray, profile });
 
 })
+
+router.get(`/get/payment/due/detail/:project/:building`, async (req, res) => {
+    const { project, building } = req.params;
+    if (!project || !building) return res.status(404).json("Not Found!");
+    const projectR = await projectModal.findById(project);
+    if (!projectR) return res.status(404).json("Not Found!");
+    const buildingR = await buildingModal.findById(building);
+    if (!buildingR) return res.status(404).json("Not Found!");
+    const payment = await Bookings.find({ Project: project, building: building });
+    if (!payment) return res.status(404).json("Not Found!");
+    console.log({ project: projectR, building: buildingR, payment: payment });
+    const profile = {
+        project: projectR.Name,
+        building: buildingR.buildingName
+    }
+    const paymentR = payment.filter((item) => {
+        if (item.Project == project && item.building == building) {
+            return item;
+        }
+    });
+    console.log({ total: paymentR });
+    let dataArray = [];
+    let obj = {};
+    for (let i = 0; i < paymentR.length; i++) {
+        const UnitR = await Units.findById(paymentR[i].unit);
+        const userR = await Bookings.findOne({unit: paymentR[i].unit});
+        obj = {
+            name:  userR ? userR.first_applicant_name : 'Not Found',
+            unit: UnitR ? UnitR.unit_name : 'Not Associated',
+            amount: paymentR[i].bookingPrice.toFixed(2),
+            mode: '--',
+            balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2)),
+            pending:paymentR[i].pending.toFixed(2),
+            status:paymentR[i].pending > 0,
+            value: await getValue(building, paymentR[i].unit)
+        };
+        dataArray.push(obj);
+    }
+    console.log({ second: dataArray });
+    res.status(200).json({ err: 0, dataArray, profile,payment:paymentR,Bookings:payment, });
+
+})
+const getValue = async(building, unit)=>{
+    if (!building || !unit) return 0;
+    const buildingR = await buildingModal.findById(building);
+    if (!buildingR) return 0;
+    const unitR = await Units.findOne({ building: building });
+    const profile = {
+        building: buildingR,
+        unit,
+        unitDetails: unitR
+
+    }
+    console.log({ building: buildingR, unit: unitR });
+
+    const PaymentTotal = await Buyermaster.find({ unit: unit, Building: building });
+    const booking = await Bookings.findOne({ building: building, unit: unit });
+    if (!booking) return 0;
+    let dataArray = [];
+    console.log({ bk: booking });
+    let total = 0;
+    for (let i = 0; i < booking.demands.length; i++) {
+        let obj = {};
+        const objectID = booking.demands[i].toString();
+        const data = await deemandModal.findById(objectID);
+        if (!data) continue;
+        total += data.amount;
+        obj = {
+            name: data.stage_name,
+            amount: data.amount,
+        };
+        console.log({ data: data, object: obj });
+        dataArray.push(obj);
+    }
+    return total;
+}
 
 
 router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
@@ -169,6 +245,8 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
     res.status(200).json({ err: 0, dataArray, profile, total });
 
 })
+
+
 
 router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
     const { building, unit } = req.params;

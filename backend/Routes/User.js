@@ -45,7 +45,7 @@ route.post("/login", async (req, res,next) => {
                     name: user.name
                 }, process.env.JWT_SECRET);
                 res.cookie('token', accessToken, { httpOnly: true,maxAge:31536000 * 365 * 24 * 60 * 60 });
-                res.status(200).json({ other});
+                res.status(200).json({ accessToken,other});
 
             } else {
                 res.status(400).json("Wrong Password");
