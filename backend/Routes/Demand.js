@@ -39,13 +39,22 @@ router.put('/update/demand/:id', verifyToken, async (req, res) => {
         for (const booking of bookings) {
             // Calculate the new "pending" value as the previous value plus 10% of the difference
             const newPending = booking.pending + (booking.totalAmount - booking.booking_price) * 0.10;
+            let obj = {
+                demandId:demand._id,
+                demandName:demand.stage_name,
+                demandAmount:demand.amount,
+                price:newPending,
+                bookingPending:booking.pending,
+                bookingPrice:booking.booking_price,
+                totalAmount:booking.totalAmount
 
+            }
             // Update the document with the new "pending" value
             await BookingModal.updateOne(
                 { _id: booking._id },
                 {
                     $set: { pending: newPending },
-                    $push: { pendingDemands: demand._id }
+                    $push: { pendingDemands: demand._id, DemandList: obj }
                 }
             );
         }

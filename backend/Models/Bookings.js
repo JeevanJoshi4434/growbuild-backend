@@ -144,6 +144,9 @@ const Booking = new mongoose.Schema({
    },
    pending:{
       type: Number
+   },
+   DemandList:{
+      type: Array
    }
 })
 
