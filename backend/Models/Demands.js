@@ -24,6 +24,10 @@ const Demand = new mongoose.Schema({
    Status: {
       type: String,
       default: 'pending'
+   },
+   createdAt : {
+      type: Date,
+      default:new Date()
    }
 
 })

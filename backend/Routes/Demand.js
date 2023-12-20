@@ -46,7 +46,8 @@ router.put('/update/demand/:id', verifyToken, async (req, res) => {
                 price:newPending,
                 bookingPending:booking.pending,
                 bookingPrice:booking.booking_price,
-                totalAmount:booking.totalAmount
+                totalAmount:booking.totalAmount,
+                onDate:new Date()
 
             }
             // Update the document with the new "pending" value
