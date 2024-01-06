@@ -148,4 +148,19 @@ router.get('/get/all/demand', verifyToken, async (req, res) => {
         res.status(500).json(err);
     }
 })
+router.get('/get/all/demand/booking/detail', async (req, res) => {
+    const {building,project,single,unit } = req.query;
+    console.log(single);
+    try {
+        if(single==="true"){
+            const booking = await BookingModal.findOne({unit:unit});
+            res.status(200).json(booking);
+        }else{
+            const bookings = await BookingModal.find({building:building,Project:project});
+            res.status(200).json(bookings);
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
 module.exports = router;
