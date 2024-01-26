@@ -321,6 +321,11 @@ router.get('/get/all/pendingdemand', async (req, res) => {
     for (let i = 0; i < paymentR.length; i++) {
         const UnitR = await Units.findById(paymentR[i].unit);
         const userR = await Bookings.findOne({ unit: paymentR[i].unit });
+        let list = paymentR[i].DemandList.filter((j)=>{
+            for (let k = 0; k < paymentR[i].pendingDemands.length; k++) {
+                if (j.demandId == paymentR[i].pendingDemands[k]) return j;
+            }
+        })
         obj = {
 
             name: userR ? userR.first_applicant_name : 'Not Found',
@@ -331,7 +336,7 @@ router.get('/get/all/pendingdemand', async (req, res) => {
             pending: paymentR[i].pending.toFixed(2),
             status: paymentR[i].pending > 0,
             pendingDemands:paymentR[i].pendingDemands,
-            list: paymentR[i].DemandList,
+            list: list,
             floor: paymentR[i].floor
         };
         dataArray.push(obj);
