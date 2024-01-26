@@ -3,6 +3,7 @@ const verifyToken = require('../config/Verification');
 const Demands = require('../Models/Demands');
 const BuildingModal = require('../Models/Buildings');
 const ProjectModal = require('../Models/Project');
+const UnitModal = require('../Models/Units');
 const BookingModal = require('../Models/Bookings');
 
 // create Demand
@@ -38,7 +39,7 @@ router.put('/update/demand/:id', verifyToken, async (req, res) => {
         const bookings = await BookingModal.find({ building: demand.Building, Project: demand.Project });
         for (const booking of bookings) {
             // Calculate the new "pending" value as the previous value plus 10% of the difference
-            const newPending = booking.pending + (booking.totalAmount - booking.booking_price) * 0.10;
+            const newPending = (booking.pending + (booking.totalAmount - booking.booking_price)) * 0.10;
             let obj = {}; 
             obj = {
                 demandId:demand._id,
@@ -148,19 +149,41 @@ router.get('/get/all/demand', verifyToken, async (req, res) => {
         res.status(500).json(err);
     }
 })
+
 router.get('/get/all/demand/booking/detail', async (req, res) => {
     const {building,project,single,unit } = req.query;
-    console.log(single);
-    try {
+    let data = [];
         if(single==="true"){
             const booking = await BookingModal.findOne({unit:unit});
-            res.status(200).json(booking);
+            const unit = await UnitModal.findById(booking.unit);
+            const project = await ProjectModal.findById(booking.Project);
+            const building = await BuildingModal.findById(booking.building);
+            let obj = {
+                unit:unit.unit_name,
+                project:project.Name,
+                building:building.buildingName,
+                detail:booking,
+            }
+            res.status(200).json(obj);
         }else{
             const bookings = await BookingModal.find({building:building,Project:project});
-            res.status(200).json(bookings);
+            for (const booking in bookings) {
+                const unit = await UnitModal.findById(bookings[booking].unit);
+                const project = await ProjectModal.findById(bookings[booking].Project);
+                const building = await BuildingModal.findById(bookings[booking].building);
+                let obj = {
+                    unit:unit.unit_name,
+                    project:project.Name,
+                    building:building.buildingName,
+                    detail:bookings[booking],
+                    pending:bookings[booking].pending < 0.00
+                }
+                data.push(obj);
+            }
+            res.status(200).json(data);
         }
-    } catch (err) {
-        res.status(500).json(err);
-    }
+    
 })
+
+
 module.exports = router;

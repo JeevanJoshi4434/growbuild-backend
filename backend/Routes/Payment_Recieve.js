@@ -7,8 +7,6 @@ const paymentRecieve = require('../Models/paymentRecieve');
 const Units = require('../Models/Units');
 const deemandModal = require('../Models/Demands');
 const Buyermaster = require('../Models/Buyermaster');
-const { default: mongoose } = require('mongoose');
-const { forEach } = require('lodash');
 // create
 router.post('/create/payment', verifyToken, async (req, res) => {
     const { BookingID, Payment_Number, Paymentdate, payment_head, PaymentAmount, sgst, cgst, Stax, narration, narration_amount, check, DD, rtgs, neft, net_banking, credit_card, bounced, bank, branch, amount, totalAmount, leftAmount, paidAmount } = req.body;
@@ -105,9 +103,9 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     let obj = {};
     for (let i = 0; i < paymentR.length; i++) {
         const UnitR = await Units.findById(paymentR[i].unit);
-        const userR = await Bookings.findOne({unit: paymentR[i].unit});
+        const userR = await Bookings.findOne({ unit: paymentR[i].unit });
         obj = {
-            name:  userR ? userR.first_applicant_name : 'Not Found',
+            name: userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
             amount: paymentR[i].bookingPrice.toFixed(2),
             mode: '--',
@@ -119,7 +117,7 @@ router.get(`/get/payment/detail/:project/:building`, async (req, res) => {
     const data = await Buyermaster.find({ Project: project, Building: building });
     for (let i = 0; i < data.length; i++) {
         const UnitR = await Units.findById(data[i].unit);
-        const userR = await Bookings.findOne({unit: data[i].unit});
+        const userR = await Bookings.findOne({ unit: data[i].unit });
         obj = {
             name: userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR?.unit_name : 'Not Found',
@@ -158,21 +156,21 @@ router.get(`/get/payment/due/detail/:project/:building`, async (req, res) => {
     let obj = {};
     for (let i = 0; i < paymentR.length; i++) {
         const UnitR = await Units.findById(paymentR[i].unit);
-        const userR = await Bookings.findOne({unit: paymentR[i].unit});
+        const userR = await Bookings.findOne({ unit: paymentR[i].unit });
         obj = {
-            name:  userR ? userR.first_applicant_name : 'Not Found',
+            name: userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
             amount: paymentR[i].bookingPrice.toFixed(2),
             mode: '--',
             balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2)),
-            pending:paymentR[i].pending.toFixed(2),
-            status:paymentR[i].pending > 0,
+            pending: paymentR[i].pending.toFixed(2),
+            status: paymentR[i].pending > 0,
             value: await getValue(building, paymentR[i].unit)
         };
         dataArray.push(obj);
     }
     console.log({ second: dataArray });
-    res.status(200).json({ err: 0, dataArray, profile,payment:paymentR,Bookings:payment, });
+    res.status(200).json({ err: 0, dataArray, profile, payment: paymentR, Bookings: payment, });
 
 })
 
@@ -185,7 +183,6 @@ router.get(`/get/payment/due/list/:project/:building`, async (req, res) => {
     if (!buildingR) return res.status(404).json("Not Found!");
     const payment = await Bookings.find({ Project: project, building: building });
     if (!payment) return res.status(404).json("Not Found!");
-    console.log({ project: projectR, building: buildingR, payment: payment });
     const profile = {
         project: projectR.Name,
         building: buildingR.buildingName
@@ -195,41 +192,39 @@ router.get(`/get/payment/due/list/:project/:building`, async (req, res) => {
             return item;
         }
     });
-    console.log({ total: paymentR });
     let dataArray = [];
     let obj = {};
     for (let i = 0; i < paymentR.length; i++) {
         const UnitR = await Units.findById(paymentR[i].unit);
-        const userR = await Bookings.findOne({unit: paymentR[i].unit});
+        const userR = await Bookings.findOne({ unit: paymentR[i].unit });
         let List = userR.DemandList;
         let pending = userR.pendingDemands;
         let pendingData = [];
         for (const pendings in pending) {
-        	List.filter(lists => {
-            		if(lists.demandId == pending[pendings]){
-                		pendingData.push(lists);
-                        console.log({data:lists});
-            		}
-        	});    
+            List.filter(lists => {
+                if (lists.demandId == pending[pendings]) {
+                    pendingData.push(lists);
+                }
+            });
         }
         obj = {
-            name:  userR ? userR.first_applicant_name : 'Not Found',
+            name: userR ? userR.first_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
             amount: paymentR[i].bookingPrice.toFixed(2),
             mode: '--',
             balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2)),
-            pending:paymentR[i].pending.toFixed(2),
-            status:paymentR[i].pending > 0,
+            pending: paymentR[i].pending.toFixed(2),
+            status: paymentR[i].pending > 0,
             value: await getValue(building, paymentR[i].unit),
-            pendingData:pendingData
+            pendingData: pendingData
         };
         dataArray.push(obj);
     }
-    console.log({ second: dataArray });
-    res.status(200).json({ err: 0, dataArray, profile,payment:paymentR,Bookings:payment, });
 
+    res.status(200).json({ err: 0, dataArray, profile, payment: paymentR, Bookings: payment, });
 })
-const getValue = async(building, unit)=>{
+
+const getValue = async (building, unit) => {
     if (!building || !unit) return 0;
     const buildingR = await buildingModal.findById(building);
     if (!buildingR) return 0;
@@ -296,12 +291,58 @@ router.get('/get/all/payment/due/:building/:unit', async (req, res) => {
         };
         console.log({ data, object: obj });
         dataArray.push(obj);
-    }
+   }
     res.status(200).json({ err: 0, dataArray, profile, total });
 
 })
+router.get('/get/all/pendingdemand', async (req, res) => {
+    const { building, project } = req.query;
+    let Name, BasicFlatDetails, totalPrice, currentStatusPending, totalPaid = "";
+    if (!project || !building) return res.status(404).json("Not Found!");
+    const projectR = await projectModal.findById(project);
+    if (!projectR) return res.status(404).json("Not Found!");
+    const buildingR = await buildingModal.findById(building);
+    if (!buildingR) return res.status(404).json("Not Found!");
+    const payment = await Bookings.find({ Project: project, building: building });
+    if (!payment) return res.status(404).json("Not Found!");
+    console.log({ project: projectR, building: buildingR, payment: payment });
+    const profile = {
+        project: projectR.Name,
+        building: buildingR.buildingName
+    }
+    const paymentR = payment.filter((item) => {
+        if (item.Project == project && item.building == building) {
+            return item;
+        }
+    });
+    console.log({ total: paymentR });
+    let dataArray = [];
+    let obj = {};
+    for (let i = 0; i < paymentR.length; i++) {
+        const UnitR = await Units.findById(paymentR[i].unit);
+        const userR = await Bookings.findOne({ unit: paymentR[i].unit });
+        obj = {
 
+            name: userR ? userR.first_applicant_name : 'Not Found',
+            unit: UnitR ? UnitR.unit_name : 'Not Associated',
+            amount: paymentR[i].bookingPrice.toFixed(2),
+            mode: '--',
+            balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2)),
+            pending: paymentR[i].pending.toFixed(2),
+            status: paymentR[i].pending > 0,
+            pendingDemands:paymentR[i].pendingDemands,
+            list: paymentR[i].DemandList,
+            floor: paymentR[i].floor
+        };
+        dataArray.push(obj);
+    }
+    console.log({ second: dataArray });
+    res.status(200).json({ err: 0, dataArray, profile, payment: paymentR, Bookings: payment, });
 
+})
+router.get('/get/live/stats', async(req,res)=>{
+    
+})
 
 router.get('/get/all/payment/single/:building/:unit', async (req, res) => {
     const { building, unit } = req.params;
