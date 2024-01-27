@@ -48,13 +48,13 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         third_applicant_phone_number,
         fourth_applicant_name,
         fourth_applicant_phone_number,
-        price_with_tax,
-        totalAmount,
+        price_with_tax:price_with_tax?.toFixed(2),
+        totalAmount:totalAmount?.toFixed(2),
         extra_facility,
-        bookingPrice,
-        unitPrice,
+        bookingPrice: bookingPrice?.toFixed(2),
+        unitPrice: unitPrice?.toFixed(2),
         demands: demand,
-        pending: (totalAmount - booking_price)
+        pending: (totalAmount - booking_price)?.toFixed(2)
     })
     const savedBooking = await newBooking.save();
     res.status(200).json(savedBooking);

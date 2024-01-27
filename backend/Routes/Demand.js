@@ -39,7 +39,7 @@ router.put('/update/demand/:id', verifyToken, async (req, res) => {
         const bookings = await BookingModal.find({ building: demand.Building, Project: demand.Project });
         for (const booking of bookings) {
             // Calculate the new "pending" value as the previous value plus 10% of the difference
-            const newPending = (booking.pending + (booking.totalAmount - booking.booking_price)) * 0.10;
+            const newPending = booking.pending > 0 ? (booking.pending + (booking.pending * (demand.amount / 100)))?.toFixed(2) : 0.00;
             let obj = {}; 
             obj = {
                 demandId:demand._id,

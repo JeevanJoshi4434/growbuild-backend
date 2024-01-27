@@ -324,7 +324,10 @@ router.get('/get/all/pendingdemand', async (req, res) => {
         obj = {
 
             name: userR ? userR.first_applicant_name : 'Not Found',
+            secondP: userR ? userR.second_applicant_name : 'Not Found',
             unit: UnitR ? UnitR.unit_name : 'Not Associated',
+            currentAddress: userR ? userR.first_applicant_correspondAddress : 'Not Found',
+            Application_Number:userR ? userR._id : 'Not Found',
             amount: paymentR[i].bookingPrice.toFixed(2),
             mode: '--',
             balance: (paymentR[i].totalAmount.toFixed(2)) - (paymentR[i].bookingPrice.toFixed(2)),
@@ -332,7 +335,7 @@ router.get('/get/all/pendingdemand', async (req, res) => {
             status: paymentR[i].pending > 0,
             pendingDemands:paymentR[i].pendingDemands,
             list: paymentR[i].DemandList,
-            floor: paymentR[i].floor
+            floor: paymentR[i].floor,
         };
         dataArray.push(obj);
     }
