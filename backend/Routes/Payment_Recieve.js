@@ -245,7 +245,7 @@ const getValue = async (building, unit) => {
     let total = 0;
     for (let i = 0; i < booking.demands.length; i++) {
         let obj = {};
-        const objectID = booking.demands[i].toString();
+        const objectID = booking.demands[i];
         const data = await deemandModal.findById(objectID);
         if (!data) continue;
         total += data.amount;
