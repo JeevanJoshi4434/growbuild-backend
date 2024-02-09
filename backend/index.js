@@ -15,6 +15,7 @@ const PaymentRecieveRoute = require('./Routes/Payment_Recieve');
 const UnitRoute = require('./Routes/Unit');
 const SaleInoventoryRoute = require('./Routes/Sale_Inoventory');
 const PaymentStatus = require('./Routes/PaymentStatus');
+const stats = require('./Routes/Statistics');
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
 const path = require('path');
@@ -44,6 +45,7 @@ app.use("/api", BookingStatusRoute);
 app.use("/api", BookingRoute);
 app.use("/api", ParkingRoute);
 app.use("/api", PaymentStatus);
+app.use("/api", stats);
 
 
 //Home Page
@@ -64,7 +66,7 @@ app.use("/api", PaymentStatus);
 // });
 
 const server = app.listen(process.env.PORT, () => {
-    console.log(`Server is running at https://${process.env.PORT}`)
+    console.log(`Server is running at http://localhost:${process.env.PORT}`)
 });
 if (process.env.SERVER === "PRODUCTION") {
     app.use(express.static(path.join(__dirname, "../build")));
