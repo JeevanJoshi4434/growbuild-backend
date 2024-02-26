@@ -19,7 +19,6 @@ route.post("/signup", async (req, res) => {
             id: user._id,
             name: user.name
         }, process.env.JWT_SECRET)
-        const OTP = this.generateOTP();
         res.cookie('token', accessToken, {
             maxAge: 2592000, httpOnly: false
         })
