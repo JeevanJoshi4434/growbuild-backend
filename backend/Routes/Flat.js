@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const verifyToken = require('../config/Verification');
 const Flats = require('../Models/Flats');
+const Unit = require('../Models/Units');
 // const {Project, floor, building, unit ,flat, flat_area, parking, starting_price ,extra_facilities} = req.body;
 // create Flat
 
@@ -51,15 +52,20 @@ router.delete('/delete/flat/:id',verifyToken,async(req,res)=>{
 })
 
 // get all Flat
-router.get('/all/flat',verifyToken,async(req,res)=>{
-    const {page,limits} = req.query;
+router.get('/all/flat', verifyToken, async (req, res) => {
+    const { page, limits } = req.query;
     try {
-        const flat = await Flats.find().sort({createdAt:-1}).skip((page-1)*limits).limit(limits);
-        res.status(200).json(flat);
+        const flats = await Flats.find().sort({ createdAt: -1 }).skip((page - 1) * limits).limit(limits);
+        for (let i = 0; i < flats.length; i++) {
+            const unit = await Unit.findById(flats[i].unit);
+            flats[i].flat = unit ? unit.unit_name : "Unknown";
+        }
+        res.status(200).json(flats);
     } catch (error) {
         res.status(500).json(error);
     }
-})
+});
+
 
 // get one flat
 router.get('/flat/:id',verifyToken,async(req,res)=>{
