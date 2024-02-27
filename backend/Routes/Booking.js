@@ -23,8 +23,7 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         // Update pendingAmount
         pendingAmount += demandAdjustment;
     }
-
-    pendingAmount = pendingAmount.toFixed(2);
+    console.log(pendingAmount);
 
     const newBooking = new Bookings({
         Project,
