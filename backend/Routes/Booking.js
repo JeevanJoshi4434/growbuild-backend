@@ -13,7 +13,6 @@ router.post('/create/booking', verifyToken, async (req, res) => {
     const parsedUnitPrice = unitPrice !== undefined ? parseFloat(unitPrice) : null;
     let pendingAmount = (parsedTotalAmount !== null && parsedBookingPrice !== null) ? (parsedTotalAmount - booking_price) : 0;
     const demand = await Demand.find({ Project: Project, Building: building, Status: 'completed' });
-    console.log(demand);
     // Iterate through each demand
     for (const demandData of demand) {
         // Extract the percent amount from the demand
@@ -22,9 +21,7 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         let demandAdjustment = (percentAmount / 100) * pendingAmount;
         // Update pendingAmount
         pendingAmount += demandAdjustment;
-        console.log({pending:pendingAmount});
     }
-    console.log({pendingTotal:pendingAmount});
 
     const newBooking = new Bookings({
         Project,
