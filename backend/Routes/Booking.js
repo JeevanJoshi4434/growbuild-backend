@@ -14,14 +14,32 @@ router.post('/create/booking', verifyToken, async (req, res) => {
     let pendingAmount = (parsedTotalAmount !== null && parsedBookingPrice !== null) ? (parsedTotalAmount - booking_price) : 0;
     const demand = await Demand.find({ Project: Project, Building: building, Status: 'completed' });
     // Iterate through each demand
+    let arr = [];
+    let pendingList = [];
     for (const demandData of demand) {
         // Extract the percent amount from the demand
+        pendingList.push(demandData._id);
         let percentAmount = demandData.amount;
-        // Calculate the adjustment based on the percentage
+        let prevAmount = pendingAmount;
         let demandAdjustment = (percentAmount / 100) * pendingAmount;
-        // Update pendingAmount
         pendingAmount += demandAdjustment;
+        let obj = {};
+        obj = {
+            demandId:demandData._id,
+            demandName:demandData.stage_name,
+            demandAmount:demandData.amount,
+            price:parseFloat(pendingAmount).toFixed(2),
+            bookingPending:prevAmount,
+            bookingPrice: parsedBookingPrice,
+            totalAmount:parsedTotalAmount,
+            onDate: new Date()
+            
+        }
+        arr.push(obj);
+        // Calculate the adjustment based on the percentage
+        // Update pendingAmount
     }
+
 
     const newBooking = new Bookings({
         Project,
@@ -69,7 +87,9 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         extra_facility,
         bookingPrice: parsedBookingPrice !== null ? parsedBookingPrice.toFixed(2) : null,
         unitPrice: parsedUnitPrice !== null ? parsedUnitPrice.toFixed(2) : null,
-        demands: demand,
+        demands: [],
+        pendingDemands: pendingList,
+        DemandList: arr,
         pending: parseFloat(pendingAmount).toFixed(2)
     });
 
