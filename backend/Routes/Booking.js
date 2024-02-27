@@ -11,8 +11,20 @@ router.post('/create/booking', verifyToken, async (req, res) => {
     const parsedTotalAmount = totalAmount !== undefined ? parseFloat(totalAmount) : null;
     const parsedBookingPrice = bookingPrice !== undefined ? parseFloat(bookingPrice) : null;
     const parsedUnitPrice = unitPrice !== undefined ? parseFloat(unitPrice) : null;
-
+    let pendingAmount = (parsedTotalAmount !== null && parsedBookingPrice !== null) ? (parsedTotalAmount - booking_price).toFixed(2) : 0.00;
     const demand = await Demand.find({ Project: Project, Building: building, Status: 'completed' });
+    // Iterate through each demand
+    for (const demand of demands) {
+        // Extract the percent amount from the demand
+        const percentAmount = demand.amount;
+        // Calculate the adjustment based on the percentage
+        const demandAdjustment = (percentAmount / 100) * pendingAmount;
+        // Update pendingAmount
+        pendingAmount += demandAdjustment;
+    }
+
+    pendingAmount = pendingAmount.toFixed(2);
+
     const newBooking = new Bookings({
         Project,
         building,
@@ -60,7 +72,7 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         bookingPrice: parsedBookingPrice !== null ? parsedBookingPrice.toFixed(2) : null,
         unitPrice: parsedUnitPrice !== null ? parsedUnitPrice.toFixed(2) : null,
         demands: demand,
-        pending: (parsedTotalAmount !== null && parsedBookingPrice !== null) ? (parsedTotalAmount - booking_price).toFixed(2) : null
+        pending: parseFloat(pendingAmount)
     });
 
     const savedBooking = await newBooking.save();
@@ -148,7 +160,7 @@ router.get('/:id/:project/:unit', verifyToken, async (req, res) => {
 
         res.status(200).json({ booking, demand, pending: TotalPending });
     } catch (e) {
-        return res.status(500).json({error:e});
+        return res.status(500).json({ error: e });
     }
 })
 module.exports = router;
