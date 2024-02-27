@@ -29,7 +29,8 @@ router.get('/get/stats',  async (req, res) => {
         // Iterate over demandList for each booking
         bookingItem.DemandList.forEach(demand => {
             // Convert demand price to two decimal places
-            const demandPrice = parseFloat(demand.price.toFixed(2));
+            console.log({Demand:demand, price:demand.price});
+            const demandPrice = demand.price ? parseFloat(demand.price.toFixed(2)) : 0;
             // Add demandList price to totalDemandListPrice
             totalDemandListPrice += demandPrice;
 
