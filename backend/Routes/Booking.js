@@ -23,7 +23,6 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         // Update pendingAmount
         pendingAmount += demandAdjustment;
     }
-    console.log(pendingAmount);
 
     const newBooking = new Bookings({
         Project,
@@ -72,7 +71,7 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         bookingPrice: parsedBookingPrice !== null ? parsedBookingPrice.toFixed(2) : null,
         unitPrice: parsedUnitPrice !== null ? parsedUnitPrice.toFixed(2) : null,
         demands: demand,
-        pending: parseFloat(pendingAmount)
+        pending: parseFloat(pendingAmount).toFixed(2)
     });
 
     const savedBooking = await newBooking.save();
