@@ -30,7 +30,7 @@ router.get('/get/stats',  async (req, res) => {
         bookingItem.DemandList.forEach(demand => {
             // Convert demand price to two decimal places
             console.log({Demand:demand, price:demand.price});
-            const demandPrice = demand.price ? parseFloat(demand.price.toFixed(2)) : 0;
+            const demandPrice = demand.price ? parseFloat(demand.price).toFixed(2) : 0;
             // Add demandList price to totalDemandListPrice
             totalDemandListPrice += demandPrice;
 
