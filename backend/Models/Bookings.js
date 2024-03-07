@@ -147,6 +147,9 @@ const Booking = new mongoose.Schema({
    },
    DemandList:{
       type: Array
+   },
+   maintenance:{
+      type:Array
    }
 })
 

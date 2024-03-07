@@ -3,10 +3,20 @@ const { default: mongoose } = require('mongoose');
 const verifyToken = require('../config/Verification');
 const Bookings = require('../Models/Bookings');
 const Demand = require('../Models/Demands');
+const { v4: uuidv4 } = require('uuid');
 // create Booking
 router.post('/create/booking', verifyToken, async (req, res) => {
-    const { Project, totalAmount, bookingPrice, unitPrice, demands, building, floor, unit, extra_facility, parking, booking_price, booking_date, allotment_date, agreement_date, first_applicant_name, first_applicant_father_name, first_applicant_husband_name, first_applicant_permanentAddress, first_applicant_correspondAddress, first_applicant_contactNumber, first_applicant_email, first_applicant_dob, first_applicant_AadharNumber, first_applicant_pan_number, first_applicant_City, first_applicant_police_station, first_applicant_country, first_applicant_occupation, first_applicant_religion, first_applicant_status, second_applicant_name, second_applicant_father_name, second_applicant_husband_name, second_applicant_contact_number, second_applicant_email, second_applicant_dob, second_applicant_pan_number, second_applicant_occupation, second_applicant_address, second_applicant_relation_with_first_applicant, third_applicant_name, third_applicant_phone_number, fourth_applicant_name, fourth_applicant_phone_number, second_applicant_adhar_number, price_with_tax } = req.body;
+    const { Project, totalAmount, bookingPrice, unitPrice, demands, building, floor, unit, extra_facility, parking, booking_price, booking_date, allotment_date, agreement_date, first_applicant_name, first_applicant_father_name, first_applicant_husband_name, first_applicant_permanentAddress, first_applicant_correspondAddress, first_applicant_contactNumber, first_applicant_email, first_applicant_dob, first_applicant_AadharNumber, first_applicant_pan_number, first_applicant_City, first_applicant_police_station, first_applicant_country, first_applicant_occupation, first_applicant_religion, first_applicant_status, second_applicant_name, second_applicant_father_name, second_applicant_husband_name, second_applicant_contact_number, second_applicant_email, second_applicant_dob, second_applicant_pan_number, second_applicant_occupation, second_applicant_address, second_applicant_relation_with_first_applicant, third_applicant_name, third_applicant_phone_number, fourth_applicant_name, fourth_applicant_phone_number, second_applicant_adhar_number, price_with_tax,
+    area,charges,yearDuration,MaintenanceCharges
+    } = req.body;
 
+    const Maintenance = {
+        id: uuidv4(),
+        area:area,
+        chargesPerSqFt:charges,
+        Duration:yearDuration,
+        MaintenanceCharges:MaintenanceCharges
+    }
     // Convert variables to numbers if they are not null or undefined
     const parsedTotalAmount = totalAmount !== undefined ? parseFloat(totalAmount) : null;
     const parsedBookingPrice = bookingPrice !== undefined ? parseFloat(bookingPrice) : null;
@@ -90,7 +100,8 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         demands: [],
         pendingDemands: pendingList,
         DemandList: arr,
-        pending: parseFloat(pendingAmount).toFixed(2)
+        pending: parseFloat(pendingAmount).toFixed(2),
+        maintenance:Maintenance
     });
 
     const savedBooking = await newBooking.save();
@@ -101,9 +112,20 @@ router.post('/create/booking', verifyToken, async (req, res) => {
 // update booking
 router.put('/update/booking/:id', verifyToken, async (req, res) => {
     const Booking = await Bookings.findById(req.params.id);
+    const {area,charges,yearDuration,MaintenanceCharges} = req.body;
+    const Maintenance = {
+        id: uuidv4(),
+        area:area,
+        chargesPerSqFt:charges,
+        Duration:yearDuration,
+        MaintenanceCharges:MaintenanceCharges
+    }
     if (!Booking) return res.status(404).send('Booking not found');
     try {
         const updatedBooking = await Bookings.findByIdAndUpdate(req.params.id, { $set: req.body })
+        const updateMaintenance = await Bookings.findByIdAndUpdate(req.params.id,{
+            $set: {maintenance:Maintenance}
+        })
         res.status(200).json(updatedBooking);
     } catch (error) {
         res.status(500).json(error);
