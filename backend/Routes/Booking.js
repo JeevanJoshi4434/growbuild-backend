@@ -58,7 +58,8 @@ router.post('/create/booking', verifyToken, async (req, res) => {
         area: area,
         chargesPerSqFt: charges,
         Duration: yearDuration,
-        MaintenanceCharges: MaintenanceCharges
+        MaintenanceCharges: MaintenanceCharges,
+        paymentDate: new Date().toDateString()
     }
     // Convert variables to numbers if they are not null or undefined
     const parsedTotalAmount = totalAmount !== undefined ? parseFloat(totalAmount) : null;
