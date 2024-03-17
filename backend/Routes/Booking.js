@@ -42,7 +42,7 @@ router.get('/get/maintenance', verifyToken, async (req, res) => {
             }
             return m;
         });
-        res.status(200).json({maintenance:maintenance,id:booking._id});
+        res.status(200).json(maintenance);
     } catch (error) {
         res.status(500).json(error);
     }
