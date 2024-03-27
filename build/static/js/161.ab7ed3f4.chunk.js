@@ -1,2 +1,0 @@
-(this["webpackJsonpvuexy-react-admin-dashboard"]=this["webpackJsonpvuexy-react-admin-dashboard"]||[]).push([[161],{2156:function(a,e,t){"use strict";t.r(e);var n=t(0),r=t.n(n);e.default=function(){return r.a.createElement("div",null,r.a.createElement("p",{className:"text-alternate"},"Payment Status"))}}}]);
-//# sourceMappingURL=161.ab7ed3f4.chunk.js.map

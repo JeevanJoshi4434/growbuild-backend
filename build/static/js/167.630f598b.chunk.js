@@ -1,2 +1,0 @@
-(this["webpackJsonpvuexy-react-admin-dashboard"]=this["webpackJsonpvuexy-react-admin-dashboard"]||[]).push([[167],{2207:function(a,e,n){"use strict";n.r(e);var t=n(0),r=n.n(t);e.default=function(){return r.a.createElement("div",null,"PaymentPlans")}}}]);
-//# sourceMappingURL=167.630f598b.chunk.js.map
