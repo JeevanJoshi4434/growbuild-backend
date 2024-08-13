@@ -149,7 +149,8 @@ router.get('/find/unit/available/:building/:project', verifyToken, async (req, r
         const bookedUnitIds = new Set(bookedUnits.map(bookedUnit => bookedUnit.unit.toString()));
         // Filter out units that are not booked
         const availableUnits = allUnits.filter(unit => !bookedUnitIds.has(unit._id.toString()));
-        res.status(200).json(availableUnits);
+        const UnavailableUnits = allUnits.filter(unit => bookedUnitIds.has(unit._id.toString()));
+        res.status(200).json({availableUnits, UnavailableUnits, allUnits});
     } catch (error) {
         res.status(500).json(error);
     }
